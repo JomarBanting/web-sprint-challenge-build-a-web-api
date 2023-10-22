@@ -1,10 +1,10 @@
 // add middlewares here related to projects
 const Project = require("./projects-model");
 
-async  function validateId(req, res, next) {
+async function validateId(req, res, next) {
     try {
         const project = await Project.get(req.params.id);
-        if (project){
+        if (project) {
             req.project = project;
             next();
         } else {
@@ -13,15 +13,20 @@ async  function validateId(req, res, next) {
                 message: "ERROR, ID not found!"
             })
         }
-    } catch(err){
+    } catch (err) {
         next(err);
     }
 }
 
 function validateBody(req, res, next) {
-    const {description, name, completed} = req.body;
-
-    if (!description || !description.trim() || !name || !name.trim()){
+    const { description, name} = req.body;
+    if (req.body.completed === undefined){
+        next({
+            status: 400,
+            message: "missing required [completed] field"
+        })
+    }
+    if (!description || !description.trim() || !name || !name.trim()) {
         next({
             status: 400,
             message: "missing required [name, body] field"
@@ -29,9 +34,7 @@ function validateBody(req, res, next) {
     } else {
         req.name = name;
         req.description = description;
-        if (completed){
-            req.completed = completed;
-        }
+        req.completed = req.body.completed ? true : false;
         next();
     }
 }

@@ -35,9 +35,32 @@ router.post("/", validateBody, (req, res, next) => {
         completed: req.completed
     })
     .then(project => {
-        console.log(project);
-        console.log(project.id)
+        console.log(req.completed)
         res.status(201).json(project)
+    }).catch(err => {
+        next(err);
+    })
+})
+
+// Project PUT
+router.put("/:id", validateId, validateBody, (req, res, next) => {
+    Project.update(req.params.id, {
+        name: req.name,
+        description: req.description,
+        completed: req.completed
+    }).then(project => {
+        res.status(200).json(project);
+    }).catch(err => {
+        next(err);
+    })
+})
+
+// Project DELETE
+router.delete("/:id", validateId, (req, res, next) => {
+    Project.remove(req.params.id)
+    .then(project => {
+        console.log(project)
+        res.status(202).json(project)
     }).catch(err => {
         next(err);
     })
