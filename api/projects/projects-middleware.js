@@ -20,20 +20,17 @@ async function validateId(req, res, next) {
 
 function validateBody(req, res, next) {
     const { description, name} = req.body;
-    if (req.body.completed === undefined){
+    if (!description || !description.trim() || !name || !name.trim() || req.body.completed === undefined) {
         next({
             status: 400,
-            message: "missing required [completed] field"
-        })
-    }
-    if (!description || !description.trim() || !name || !name.trim()) {
-        next({
-            status: 400,
-            message: "missing required [name, body] field"
+            message: "missing required [name, description] field"
         })
     } else {
         req.name = name;
         req.description = description;
+        if (typeof req.body.completed !== "boolean"){
+            req.completed = false;
+        }
         req.completed = req.body.completed ? true : false;
         next();
     }

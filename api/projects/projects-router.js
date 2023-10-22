@@ -18,10 +18,21 @@ router.get("/", (req, res, next) => {
     })
 })
 
-router.get("/:id", validateId, (req, res, next) => {
-    Project.get(req.params.id)
-    .then(project => {
-        res.status(200).json(project);
+router.get("/:id", validateId, (req, res) => {
+    // Project.get(req.params.id)
+    // .then(project => {
+    //     res.status(200).json(project);
+    // }).catch(err => {
+    //     next(err);
+    // })
+    res.status(200).json(req.project);
+})
+
+router.get("/:id/actions", validateId, (req, res, next) => {
+    Project.getProjectActions(req.params.id)
+    .then(projectActions => {
+        console.log(projectActions);
+        res.status(200).json(projectActions);
     }).catch(err => {
         next(err);
     })
@@ -35,7 +46,6 @@ router.post("/", validateBody, (req, res, next) => {
         completed: req.completed
     })
     .then(project => {
-        console.log(req.completed)
         res.status(201).json(project)
     }).catch(err => {
         next(err);
